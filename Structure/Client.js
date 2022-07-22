@@ -1,10 +1,8 @@
 const Discord = require("discord.js");
 const fs = require("fs")
-const InviteTracker = require("@androz2091/discord-invites-tracker");
 const intents = new Discord.Intents(32767);
 const Command = require("./Command");
 const Event = require("./Event");
-const InviteEvent = require("./InviteEvent");
 
 class Client extends Discord.Client {
 
@@ -18,21 +16,13 @@ class Client extends Discord.Client {
 
         this.commands = new Discord.Collection()
         this.alias = new Discord.Collection()
-        this.snipe = new Map()
         this.color = "#00feff";
         this.tracker = InviteTracker.init(this, {
             fetchGuilds: true,
             fetchVanity: true,
             fetchAuditLogs: true,
         });
-        this.function = {
-            createID: require("../Fonctions/createID"),
-            createCaptcha: require("../Fonctions/createCaptcha"),
-            searchLinks: require("../Fonctions/searchLinks"),
-            searchMentions: require("../Fonctions/searchMentions"),
-            searchSpam: require("../Fonctions/searchSpam")
-        }
-    }
+  }
 
   start(token) {
 
@@ -76,26 +66,6 @@ class Client extends Discord.Client {
         this.on(event.event, event.run.bind(null, this));
     })
 });
-
-fs.readdirSync("./Events/").filter(dir => dir === "Invite").forEach(dirs => {
-
-    fs.readdirSync(`./Events/${dirs}/`).filter(files => files.endsWith(".js")).forEach(async evt => {
-
-        /**
-         * @type {InviteEvent}
-        */
-
-        const event = require(`../Events/${dirs}/${evt}`);
-        console.log(`  ║══════════════════════════════════════
-  ║  ↳ ${event.event}.js
-  ║    ↳ Événement chargé avec succès ! `);
-        this.tracker.on(event.event, event.run.bind(null, this));
-    })
-});
-console.log(`  ╚══════════════════════════════════════`)
-
-this.login(process.env.TOKEN)
-}
 }
 
 module.exports = Client;
